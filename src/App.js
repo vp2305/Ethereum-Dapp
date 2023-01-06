@@ -1,8 +1,11 @@
 import * as React from "react";
+// This is the library that allows us to talk to our contract from our frontend.
 import { ethers } from "ethers";
 import './App.css';
 import { useEffect } from "react";
 import { useState } from "react";
+import dotenv from "dotenv";
+import abi from "./utils/WavePortal.json";
 
 const getEthereumObject = () => window.ethereum;
 
@@ -35,13 +38,16 @@ const findMetaMaskAccount = async () => {
     }
 
   } catch (error) {
-    console.error(error);
+    console.error(error.message);
     return null;
   }
 };
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
+  const [totalWaveCount, setTotalWaveCount] = useState(0);
+
+  const contractABI = abi.abi;
 
   /*
    * The passed callback function will be run when the page loads.
@@ -55,8 +61,28 @@ const App = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (currentAccount) {
+      const waveCount = async () => {
+        const { ethereum } = window;
+        if (ethereum) {
+          const provider = new ethers.providers.Web3Provider(ethereum);
+          const signer = provider.getSigner();
+          // 0x88c8469F62b1Fa375550E1E3B1cFdE7292A49957
+          const wavePortalContract = new ethers.Contract(process.env.REACT_APP_CONTRACT_ADDRESS, contractABI, signer);
+
+          let count = await wavePortalContract.getTotalWaves();
+          let array = await wavePortalContract.wave_results;
+          console.log("Array: ", array);
+          setTotalWaveCount(count.toNumber());
+        }
+      }
+      waveCount().catch(console.error);
+    }
+  }, [contractABI, currentAccount])
+
   /*
-   * This function will allow us to connect to the user's wallet.
+   * This function will allow us to connect to the user's wallet!
    */
   const connectWallet = async () => {
     try {
@@ -71,12 +97,45 @@ const App = () => {
       console.log("Connected with the account: ", account[0]);
       setCurrentAccount(account[0])
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
     }
   }
 
-  const wave = () => {
+  /*
+  * Description: This function is used to make a transaction onto the blockchain.
+  * Blockchain address: 0x88c8469F62b1Fa375550E1E3B1cFdE7292A49957
+  * */
+  const wave = async () => {
+    try {
+      const { ethereum } = window;
 
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const wavePortalContract = new ethers.Contract(process.env.REACT_APP_CONTRACT_ADDRESS, contractABI, signer);
+
+        let count = await wavePortalContract.getTotalWaves();
+        console.log("Total number of waves: ", count.toNumber());
+
+        // Execute the actual waves from your smart contract.
+        const waveTxt = await wavePortalContract.wave();
+        console.log("Mining...:", waveTxt.hash);
+
+        await waveTxt.wait();
+        console.log("Mined -- ", waveTxt.hash);
+
+        count = await wavePortalContract.getTotalWaves();
+        console.log("Retrieved total wave count...", count.toNumber());
+
+        setTotalWaveCount(count);
+      }
+      else {
+        console.log("Ethereum object doesn't exist!");
+      }
+
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
   return (
@@ -87,17 +146,20 @@ const App = () => {
         </div>
 
         <div className="bio">
-          I am Vaibhav, and I am a simple individual. Thats pretty cool right? Connect your Ethereum wallet and wave at me!
+          I am Vaibhav, and I am real life humanoid 😁. Thats pretty cool right? Connect your Ethereum wallet and wave at me!
         </div>
 
-        <button className="waveButton" onClick={wave}>
-          Wave at Me
-        </button>
-
-        {!currentAccount && (
-          <button className="waveButton" onClick={connectWallet}>
+        {!currentAccount ? (
+          <button className="waveButton connectWallet" onClick={connectWallet}>
             Connect Wallet
           </button>
+        ) : (
+          <div className="wavesContainer">
+            <h3>Total # of Waves: {totalWaveCount}</h3>
+            <button className="waveButton" onClick={wave}>
+              Wave at Me
+            </button>
+          </div>
         )}
       </div>
     </div>

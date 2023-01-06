@@ -44,6 +44,11 @@
   margin-right: auto;
 }
 
+.connectWallet {
+  /* cadetblue */
+  background-color: rgb(107, 6, 190);
+}
+
 .waveButton:hover {
   transform: scale(1.1);
 }
