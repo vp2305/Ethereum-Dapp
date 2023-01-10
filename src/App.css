@@ -8,6 +8,7 @@
   justify-content: center;
   width: 100%;
   margin-top: 64px;
+  padding-bottom: 20px;
 }
 
 .dataContainer {
@@ -44,11 +45,91 @@
   margin-right: auto;
 }
 
+.generating {
+  background-color: rgb(65, 65, 65);
+  color: rgb(177, 177, 177);
+}
+
 .connectWallet {
   /* cadetblue */
-  background-color: rgb(107, 6, 190);
+  background-color: #6b06be;
 }
 
 .waveButton:hover {
   transform: scale(1.1);
 }
+
+.generating:hover {
+  transform: scale(1);
+}
+
+
+#allWaveTitle {
+  margin-top: 70px;
+  font-size: 30px;
+}
+
+
+.allWaves {
+  border-image: linear-gradient(to left, #3a7bd5, #d53a9d) 5;
+  border-width: 3px;
+  border-style: solid;
+  border-image-slice: 9;
+  padding: 15px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.prompt-box {
+  border-bottom-width: 1px;
+  border-color: rgba(255, 255, 255, 0.1);
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-style: solid;
+  border-top-width: 1px;
+  place-content: flex-start;
+  align-items: flex-start;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  display: flex;
+  flex: 0 0 auto;
+  flex-flow: column nowrap;
+  gap: 10px;
+  height: 40px;
+  overflow: hidden;
+  padding: 20px;
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  will-change: transform;
+  overflow: auto;
+  outline: none;
+  resize: none;
+  font-size: 14px;
+  font-style: normal;
+  letter-spacing: 0px;
+  line-height: 1.6em;
+  text-align: start;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  text-transform: none;
+}
+
+.prompt-box:focus {
+  border-color: rgba(255, 255, 255, 0.75)
+}
+
+/* .mainContainer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 0px;
+  padding: 5px;
+  background: linear-gradient(45deg, red, blue);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+} */
